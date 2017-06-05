@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <p></p>
+        <div class="container">
+            <div class="form-group">
+                <select class="form-control">
+                    <option>h5</option>
+                    <option>web</option>
+                    <option>android</option>
+                    <option>ios</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="song" class="form-control" placeholder="专辑名" />
+            </div>
+            <button id="search" class="btn btn-primary" disabled>正在数据初始化...</button>
+            <p></p>
+            <div id="tpl"></div>
+            <script type="text/template" id="template">
+                <div>
+                    <ul class="list-group">
+                        <li class="list-group-item">专辑名：<span><%= albumName %></span></li>
+                        <li class="list-group-item">类型：<span><%= albumtype %></span></li>
+                        <li class="list-group-item">语言：<span><%= lan %></span></li>
+                        <li class="list-group-item">发布时间：<span><%= pubTime %></span></li>
+                        <li class="list-group-item">简介：<span><%= desc %></span></li>
+                        <li class="list-group-item">播放次数：<span><%= listen_count / 1e4 %>&nbsp;万</span></li>
+                    </ul>
+                </div>
+            </script>
+        </div>
+        <script src="http://cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>
+        <script>
+            var list;   
+            var song = document.getElementById('song');
+            var searchBtn = document.getElementById('search');
+            searchBtn.addEventListener('click', search);
+
+            function singeralbumlistJsonCallback ( json ){
+                list = json.data.list;
+                searchBtn.removeAttribute('disabled');
+                searchBtn.innerText = '搜索';
+            }
+
+            function search ( e ){
+                var t = _.template(document.getElementById("template").innerText);
+                for( var i = 0, len = list.length; i < len; i++ ){
+                    if( list[ i ].albumName.indexOf( song.value ) > -1 ){
+                        document.getElementById("tpl").innerHTML = t( list[ i ] );
+                        break;
+                    }
+                }
+            }
+        </script>
+        <script src="https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_album.fcg?format=jsonp&platform=yqq&singermid=000aw4WC2EQYTv&order=time&begin=0&num=500&g_tk=11431947&jsonpCallback=singeralbumlistJsonCallback&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0"></script>
+    </body>
+</html>
